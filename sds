@@ -1,0 +1,424 @@
+import stanford.karel.SuperKarel;
+
+public class Homework extends SuperKarel {
+    String south = "2";
+    String north = "0";
+    String east = "1";
+    String west = "3";
+
+    private int counter = 0, row = 1, column = 1, realRowPosition, realColumnPosition, lastRowPosition, lastColumnPosition, centerPointOne, centerPointTwo;
+
+    //    private int sizeOfWorld = 1, streetCenter1, streetCenter2, centerPoint1, centerPoint2, moveDown, moveUpWay, counter;
+//    private boolean worldIsEven, centerPointIsEven;
+//    private String[] dir;
+// 1 is east
+    // 3 is west
+    // 2 is south
+    // 0 is north
+    public void run() {
+        setBeepersInBag(1000);
+        setRow();
+        realRowPosition = row;
+//        setTheVariable();
+        centerPointOne = row / 2;
+        System.out.println(centerPointOne + "center row ");
+        returnMiddle(centerPointOne, true);
+        setColumn();
+        realColumnPosition = column;
+        if (column > row)
+            moveDown(((column - (row - 2)) / 2));
+        else
+            moveDown(1);
+        drawBigSquarer();
+        System.out.println("real row ="+realRowPosition+" real column ="+realColumnPosition);
+        System.out.println("row = " + row + "column =" + column);
+        if (row == column)
+            returnMiddle(centerPointOne, false);
+        else if (column > row)
+        {
+            System.out.println( centerPointTwo);
+
+            setDirection(this.south);
+            for (int i=realColumnPosition-1;i>centerPointTwo;i--){
+                move();
+            }
+        }
+        else
+            returnMiddle(centerPointTwo, false);
+        drawMiddleRowLine();
+//        returnMiddle(getDirection());
+//        setColumn(true);
+//        System.out.println(sizeOfWorld);
+//        setTheVariable();
+//        setCenterPoint(moveDown,false);
+//        startPutBeeperOnStreet();
+//        setCenterPoint2();
+//        setStreetWithBeeper();
+//        SetAvenueWithBeeper();
+//        setCenterPoint3();
+//        setStreetWithBeeperFromWest();
+//        setAvenueWithBeeperFromNorth();
+//        setCenterPoint4();
+//        resetKarel();
+//        System.out.println(counter);
+        newWorld();
+    }
+
+    private void drawMiddleRowLine() {
+        setDirection(this.east);
+        while (frontIsClear()) {
+            move();
+            putBeeperIfNotPresent();
+            if (frontIsBlocked()) {
+                setDirection(getReverseDirection());
+                while (frontIsClear()) {
+                    move();
+                    putBeeperIfNotPresent();
+                }
+            }
+        }
+
+    }
+
+    private void putBeeperIfNotPresent() {
+        if (!beepersPresent()) {
+            putBeeper();
+        }
+    }
+
+    private void drawBigSquarer() {
+        int numberOfMoves = 0;
+        setDirection(this.west);
+        for (int j = 1; j <= 5; j++) {
+            if (j == 1 || j == 5) {
+                System.out.println("last column = " + lastColumnPosition + "  last row =" + lastRowPosition);
+                if (row == column)
+                    numberOfMoves = lastColumnPosition - lastRowPosition;
+                if (row > column)
+                    numberOfMoves = lastColumnPosition / 2;
+                if (column > row)
+                    numberOfMoves = row / 2;
+            } else {
+                if (column > row)
+                    numberOfMoves = row - 2;
+                else
+                    numberOfMoves = lastColumnPosition - 2;
+            }
+            System.out.println(numberOfMoves + " j= " + j);
+            for (int i = 1; i < numberOfMoves; i++) {
+                move();
+                putBeeperIfNotPresent();
+            }
+            if (getDirection() != 0)
+                setDirection(getDirection() - 1);
+            else {
+                setDirection(this.west);
+            }
+        }
+    }
+
+    private void setTheVariable() {
+        if (row % 2 == 0) {
+
+        }
+    }
+
+    private void moveDown(int numberOfMoves) {
+        setDirection(this.south);
+        for (int i = 1; i <= numberOfMoves; i++) {
+            move();
+            realColumnPosition--;
+        }
+    }
+
+    private int getReverseDirection() {
+        int direction = getDirection();
+        return direction - 2 < 0 ? direction + 2 : direction - 2;
+    }
+
+    private void returnMiddle(int dimension, boolean reverse) {
+        if (reverse) {
+            setDirection(Integer.toString(getReverseDirection()));
+            dimension++;
+        }
+        for (int i = 1; i < dimension; i++) {
+            if (frontIsClear()) {
+                move();
+                lastRowPosition = row - i;
+            }
+        }
+    }
+
+    private void setColumn() {
+        setDirection(this.north);
+        while (frontIsClear()) {
+            putBeeperIfNotPresent();
+            move();
+            this.column++;
+        }
+        centerPointTwo = column / 2;
+        this.lastColumnPosition = this.column;
+        putBeeperIfNotPresent();
+    }
+
+    private void drawMiddleLine() {
+        int dire = getDirection();
+        System.out.println(Integer.parseInt(this.east) == dire);
+        setDirection(this.west);
+        for (int i = 1; i < row / 2; i++) {
+            move();
+        }
+        setDirection(this.north);
+        while (frontIsClear()) {
+            putBeeper();
+            move();
+            column++;
+        }
+
+    }
+
+    @Override
+    public void move() {
+        super.move();
+        counter++;
+//        System.out.println(counter);
+    }
+
+    private void setRow() {
+        while (frontIsClear()) {
+            move();
+            row++;
+        }
+    }
+
+    private void setDirection(String dir) {
+        switch (dir) {
+            case "2":
+                while (!facingSouth()) turnLeft();
+                break;
+            case "1":
+                while (!facingEast()) turnLeft();
+                break;
+            case "3":
+                while (!facingWest()) turnLeft();
+                break;
+            case "0":
+                while (!facingNorth()) turnLeft();
+                break;
+        }
+
+    }
+//        setDirection("east");
+//        int i;
+//        for (i = 1; i < (sizeOfWorld%2==0?sizeOfWorld/2:sizeOfWorld/2-1); i++) {
+//            move();
+//        }
+//        sizeOfWorld+=i;
+//
+//
+//    }
+//
+//    private void setCenterPoint4() {
+//        moveUp(moveDown + 1);
+//        setDirection("north");
+//        setCenterPoint(moveDown, true);
+//    }
+//
+//    private void setAvenueWithBeeperFromNorth() {
+//        move();
+//        dir = new String[]{"east", "south", "west", "south"};
+//        putBeeperUntil(streetCenter2, dir, false);
+//        setDirection("west");
+//    }
+//
+//    private void setStreetWithBeeperFromWest() {
+//        findStreet("south");
+//        turnLeft();
+//        dir = new String[]{"south", "east", "north", "east"};
+//        putBeeperUntil(streetCenter2, dir, false);
+//        setDirection("south");
+//    }
+//
+//    private void setCenterPoint3() {
+//        setDirection("west");
+//        if (centerPointIsEven && !worldIsEven) moveUp(moveUpWay + 2);
+//        else moveUp(moveUpWay + 1);
+//        setDirection("south");
+//        setCenterPoint(moveDown, false);
+//        setDirection("west");
+//    }
+//
+//    private void SetAvenueWithBeeper() {
+//        dir = new String[]{"north", "east", "north", "west"};
+//        setDirection("north");
+//        putBeeperUntil(streetCenter2, dir, false);
+//    }
+//
+//    private void setStreetWithBeeper() {
+//        if ((centerPointIsEven && !worldIsEven) || (centerPointIsEven && worldIsEven))
+//            putBeeperUntil(streetCenter1, dir, true, moveDown + 1);
+//        else putBeeperUntil(streetCenter1, dir, true, moveDown);
+//    }
+//
+//    private void startPutBeeperOnStreet() {
+//        setDirection("east");
+//        findStreet("north");
+//        dir = new String[]{"south", "west", "north", "west"};
+//        putBeeperUntil(centerPoint2, dir, true);
+//    }
+//
+//    private void setBeeperForEvenWorld(int toPoint, String[] dir, boolean isInStreet, int... moveAlready) {
+//        int move = moveAlready.length > 0 ? moveAlready[0] : 0;
+//        int i = sizeOfWorld - toPoint - move, temp = 0;
+//        i = i * 2;
+//        while (i >= 0) {
+//            if (temp % 4 == 0) temp = 0;
+//            if (noBeepersPresent()) putBeeper();
+//            setDirection(dir[temp]);
+//            if (frontIsBlocked()) break;
+//            move();
+//            temp++;
+//            i--;
+//        }
+//        if (!beepersPresent()) putBeeper();
+//        if (((sizeOfWorld - toPoint - move) * 2) % 4 == 0 && isInStreet) {
+//            setDirection("north");
+//            move();
+//        }
+//    }
+//
+
+//
+//    private void setCenterPoint2() {
+//        setDirection("north");
+//        if ((!worldIsEven && centerPointIsEven)) setCenterPoint(moveUpWay + 1, true);
+//        else if (worldIsEven) setCenterPoint(moveUpWay, true);
+//        else setCenterPoint(moveUpWay + 1, false);
+//        setDirection("south");
+//
+//        if (worldIsEven) moveUp(moveUpWay);
+//        else moveUp(moveUpWay + 1);
+//        setDirection("west");
+//    }
+//
+//    private void setTheVariable() {
+//        if (sizeOfWorld % 2 == 0) {
+//            worldIsEven = true;
+//            streetCenter1 = sizeOfWorld / 2;
+//            streetCenter2 = streetCenter1 + 1;
+//            if ((sizeOfWorld - streetCenter2) % 2 == 0) {
+//                centerPointIsEven = true;
+//                centerPoint1 = (sizeOfWorld - streetCenter1) + (streetCenter2 / 2);
+//                centerPoint2 = centerPoint1 + 1;
+//            } else {
+//                centerPoint1 = (sizeOfWorld - streetCenter1) + (streetCenter1 / 2) + 1;
+//                centerPoint2 = centerPoint1;
+//            }
+//        } else {
+//            streetCenter1 = (sizeOfWorld / 2) + 1;
+//            streetCenter2 = streetCenter1;
+//            if ((sizeOfWorld - streetCenter1) % 2 == 0) {
+//                centerPointIsEven = true;
+//                centerPoint1 = ((sizeOfWorld / 2) + (streetCenter1 / 2)) + 1;
+//                centerPoint2 = centerPoint1 + 1;
+//            } else {
+//                centerPoint1 = streetCenter1 + (streetCenter1 / 2);
+//                centerPoint2 = centerPoint1;
+//            }
+//        }
+//        moveDown = sizeOfWorld - centerPoint2;
+//        moveUpWay = ((worldIsEven) ? moveDown + 1 : moveDown);
+//        moveUp(moveDown);
+//        turnRight();
+//    }
+//
+//    private void moveUp(int numOfMove) {
+//        for (int i = 0; i < numOfMove; i++) {
+//            if (frontIsClear())
+//                move();
+//        }
+//    }
+//
+
+    //
+//    private void setCenterPoint(int numOfMove, boolean reverseSqr) {
+//        moveUp(numOfMove);
+//        if (centerPointIsEven) {
+//            putSquare(reverseSqr);
+//        } else {
+//            paintCorner(255);
+//        }
+//
+//
+//    }
+//
+//    private void putSquare(boolean reverse) {
+//        if (!reverse) {
+//            turnLeft();
+//        }
+//        paintCorner(255);
+//
+//        int i = 0;
+//        while (i < 3) {
+//            move();
+//            paintCorner(255);
+//            i++;
+//            if (i == 3) break;
+//            if (reverse) turnLeft();
+//            else turnRight();
+//        }
+//    }
+//
+//    private void findStreet(String dir) {
+//        moveUp(moveDown);
+//        setDirection(dir);
+//        if (worldIsEven && centerPointIsEven && (dir.equals("south"))) moveUp(moveUpWay);
+//        else if (worldIsEven && !centerPointIsEven && (dir.equals("south"))) moveUp(moveUpWay);
+//        else moveUp(moveUpWay + 1);
+//    }
+//
+//    private void putBeeperUntil(int toPoint, String[] dir, boolean isInStreet, int... numOfAlreadyMove) {
+//        int move = numOfAlreadyMove.length > 0 ? numOfAlreadyMove[0] : 0;
+//        int i = sizeOfWorld - move;
+//        if (worldIsEven) {
+//            setBeeperForEvenWorld(toPoint, dir, isInStreet, numOfAlreadyMove);
+//        } else {
+//            if (!beepersPresent()) putBeeper();
+//            if (isInStreet) setDirection("west");
+//            while (i != toPoint) {
+//                if (frontIsBlocked()) break;
+//                move();
+//                if (!beepersPresent()) putBeeper();
+//                i--;
+//            }
+//        }
+//    }
+    private void newWorld() {
+
+//        sizeOfWorld = 1;
+//        streetCenter1 = 0;
+//        streetCenter2 = 0;
+//        centerPoint1 = 0;
+//        centerPoint2 = 0;
+//        moveDown = 0;
+//        moveUpWay = 0;
+        counter = 0;
+        row = 1;
+        column = 1;
+        lastRowPosition = 0;
+        lastColumnPosition = 0;
+//        worldIsEven = false;
+//        centerPointIsEven = false;
+    }
+
+
+//
+//    private void resetKarel() {
+//        setDirection("west");
+//        moveUp(moveDown);
+//        setDirection("south");
+//        moveUp(moveDown);
+//        setDirection("east");
+//    }
+
+}
